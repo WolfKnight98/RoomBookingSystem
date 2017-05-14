@@ -587,39 +587,33 @@ public class AppGUI extends Application
             if ( util.StringsAreEmpty( userData ) ) {
                 notify( "You have not entered any information.", true );
             } else {
-                if ( util.ValidString( userData[0] ) && util.ValidString( userData[1] ) ) {
-                    notify( "First and last name valid.", false );
+                if ( util.ForenameIsValid( userData[0] ) && util.LastnameIsValid( userData[1] ) ) {
+                    if ( !sql.CheckAccountExists( userData[2] ) && util.UsernameIsValid( userData[2] ) ) {
+                        if ( util.PasswordIsValid( userData[3] ) && util.PasswordsMatch( userData[3], userData[4] ) ) {
+                            if ( titleList.getValue() == null ) {
+                                notify( "You have not selected a title.", true );
+                            } else {
+                                // sql.RegisterNewUser( username, password, title, firstname, lastname );
+                                notify( "Your account has been registered, an administrator will view your request and will either accept or deny it soon..", false );
+                            }
+                        } else if ( userData[3].isEmpty() || userData[4].isEmpty() ) {
+                            notify( "Password/confirm password box is empty.", true );
+                        } else {
+                            notify( "Passwords do not match.", true );
+                        }
+                    } else if ( sql.CheckAccountExists( userData[2] ) ) {
+                        notify( "An account with that username already exists.", true );
+                    } else if ( userData[2].isEmpty() ) {
+                        notify( "The username field is empty.", true );
+                    } else {
+                        notify( "Username must be between 5 and 32 characters.", true );
+                    }
                 } else if ( userData[0].isEmpty() || userData[1].isEmpty() ) { 
-                    
+                    notify( "The forename/lastname field is empty.", true );
                 } else {
                     notify( "The forename and/or lastname field contains invalid characters.", true );
                 }
             }
-            
-//            if ( titleList.getValue() == null ) {
-//                if ( !util.ArrayContainsValidStrings( userData ) || util.StringsAreEmpty( userData ) ) {
-//                    notify( "You have some information missing or you have invalid characters. Remove any spaces, non-numbers and non-letters.", true );
-//                } else {
-//                    notify( "You have some information missing, please check your details.", true );
-//                }
-//            } else {
-//                if ( sql.CheckAccountExists( username ) == false ) {
-//                    if ( password.length() < 8 ) {
-//                        notify( "Password is less than 8 characters.", true );
-//                    } else if ( password.length() > 32 ) {
-//                        notify( "Password exceeds the 32 character limit.", true );
-//                    } else {
-//                        if ( !password.equals( confpassword ) ) {
-//                            notify( "Passwords do not match.", true );
-//                        } else {
-//                            // sql.RegisterNewUser( username, password, title, firstname, lastname );
-//                            notify( "Your account has been registered, an administrator will activate your account soon.", false );
-//                        }
-//                    }
-//                } else {
-//                    notify( "An account with that username already exists.", true );
-//                }
-//            }
         } );
     }
     
