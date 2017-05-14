@@ -184,14 +184,15 @@ public class MySQL_Handler
      * @param firstname First name of the user. 
      * @param lastname Surname of the user. 
      */
-    public void CreateUserAccount( String username, String password, String title, String firstname, String lastname ) 
+    public void CreateUserAccount( String username, String password, String title, String firstname, String lastname, boolean authorised ) 
     {
         boolean exists = this.CheckAccountExists( username );
+        byte auth = this.SQLBoolean( authorised );
         
         if ( exists ) {
             DebugPrint( "Account already exists, try a different username." );
         } else {
-            String act = String.format( "INSERT INTO users (UserName, UserPassword, UserFirstName, UserLastName, UserRank, UserTitle) VALUES ('%s', MD5('%s'), '%s', '%s', '%d', '%s');", username, password, firstname, lastname, 0, title ); 
+            String act = String.format( "INSERT INTO users (UserName, UserPassword, UserFirstName, UserLastName, UserRank, UserTitle, UserAuthorised) VALUES ('%s', MD5('%s'), '%s', '%s', '%d', '%s', '%d');", username, password, firstname, lastname, 0, title, auth ); 
             
             this.executeUpdate( act ); 
             
@@ -693,6 +694,15 @@ public class MySQL_Handler
         DateTimeFormatter dt = DateTimeFormatter.ofPattern( "yyyy-MM-dd" );
         
         return date.format( dt ); 
+    }
+    
+    private byte SQLBoolean( boolean bool )
+    {
+        if ( bool ) {
+            return 1;
+        } else {
+            return 0; 
+        }
     }
     
     private void errnotify( String message )
