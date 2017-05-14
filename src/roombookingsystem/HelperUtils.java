@@ -271,13 +271,28 @@ public class HelperUtils
         return today;
     }
     
+    public boolean ForenameIsValid( String forename )
+    {
+        return !forename.isEmpty() && forename.length() >= 3 && forename.length() <= 20 && this.ValidString( forename );
+    }
+    
+    public boolean LastnameIsValid( String lastname )
+    {
+        return !lastname.isEmpty() && lastname.length() >= 3 && lastname.length() <= 20 && this.ValidString( lastname );
+    }
+    
     public boolean UsernameIsValid( String username )
     {
-        if ( !username.isEmpty() && username.length() <= 32 && this.ValidString( username ) ) 
-        {
-            return true; 
-        } 
-        
-        return false; 
+        return !username.isEmpty() && username.length() >= 5 && username.length() <= 32 && this.ValidString( username ); 
+    }
+    
+    public boolean PasswordIsValid( String password )
+    {
+        return !password.isEmpty() && password.length() >= 8 && password.length() <= 32; 
+    }
+    
+    public boolean PasswordsMatch( String pass, String confpass ) 
+    {
+        return pass.equals( confpass );
     }
 }
