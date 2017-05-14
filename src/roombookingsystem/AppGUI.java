@@ -131,6 +131,7 @@ public class AppGUI extends Application
         btn.setOnAction( e -> {
             // Get the username and password data from the textfields
             String username, password; 
+            boolean valid, authorised;
             username = userTextField.getText();
             password = pwBox.getText();
             
@@ -143,13 +144,20 @@ public class AppGUI extends Application
             } else {
                 actiontarget.setText( "Logging in ..." );
                 
-                // Call an SQL  utility function to authenticate the username and password entered
-                boolean valid = sql.AuthenticateUser( username, password );
+                // Call an SQL utility function to authenticate the username and password entered
+                valid = sql.AuthenticateUser( username, password );
 
                 // If the username and password is valid, then set the current user ID and load the timetable
                 if ( valid ) {
                     CURRENT_USER_ID = sql.GetUserID( username );
-                    this.TimeTable( stage );
+                    
+                    authorised = sql.IsAccountAuthorised( CURRENT_USER_ID );
+                    
+                    if ( authorised ) {
+                        this.TimeTable( stage );
+                    } else {
+                        notify( "Your account has not been authorised yet.", false );
+                    }
                 } else {
                     actiontarget.setText( "User details invalid." );
                 }
@@ -593,7 +601,7 @@ public class AppGUI extends Application
                             if ( titleList.getValue() == null ) {
                                 notify( "You have not selected a title.", true );
                             } else {
-                                // sql.RegisterNewUser( username, password, title, firstname, lastname );
+                                sql.CreateUserAccount( userData[2], userData[3], title, userData[0], userData[1], false );
                                 notify( "Your account has been registered, an administrator will view your request and will either accept or deny it soon..", false );
                             }
                         } else if ( userData[3].isEmpty() || userData[4].isEmpty() ) {

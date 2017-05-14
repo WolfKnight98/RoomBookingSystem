@@ -270,6 +270,14 @@ public class MySQL_Handler
         }
     }
     
+    public boolean IsAccountAuthorised( int userid )
+    {
+        String authStr = this.GetUserColumnInfo( "UserAuthorised" , userid );
+        byte auth = Byte.decode( authStr );
+        
+        return auth == 1;
+    }
+    
     /**
      * Internal method for collecting a set of data for a specific user from a column in the users table.
      * @param col_name The name of the column in the users table. 
