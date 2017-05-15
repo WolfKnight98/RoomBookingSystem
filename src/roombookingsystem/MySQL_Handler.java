@@ -391,6 +391,8 @@ public class MySQL_Handler
         return title;
     }
     
+    
+    
     /**
      * Used to get a user's name formatted in B Smith instead of Bob Smith
      * @param userid Unique ID
@@ -596,6 +598,37 @@ public class MySQL_Handler
         }
         
         return null; 
+    }
+    
+    // order: id, firstname, lastname, username, title, rank, authorised
+    public String[][] GetAllUsers()
+    {
+        String q = "SELECT * FROM users;";
+        ResultSet rs = this.query( q );
+        List rows = new ArrayList();
+        
+        try {
+            while ( rs.next() )
+            {
+                String[] row = new String[7];
+                row[0] = rs.getString( "UserID" );
+                row[1] = rs.getString( "UserFirstName" );
+                row[2] = rs.getString( "UserLastName" );
+                row[3] = rs.getString( "UserName" );
+                row[4] = rs.getString( "UserTitle" );
+                row[5] = rs.getString( "UserRank" );
+                row[6] = rs.getString( "UserAuthorised" );
+                
+                rows.add( row );
+            }
+            
+            String[][] rowData = (String[][]) rows.toArray( new String[rows.size()][7] ); 
+            return rowData;
+        } catch ( SQLException err ) {
+            System.err.println( err );
+        }
+        
+        return null;
     }
     
     /**

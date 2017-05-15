@@ -46,7 +46,6 @@ public class AppGUI extends Application
     private static int CURRENT_USER_ID; 
     private boolean BOOK_WINDOW_OPEN = false; 
     private boolean ADMIN_TOOLS_WINDOW_OPEN = false;
-    private boolean ADD_ROOM_WINDOW_OPEN = false; 
     private String CURRENT_ROOM = "";
     private LocalDate CURRENT_WEEK_DATE = null; 
     private LocalDate DATE_OF_OPEN = null; 
@@ -684,6 +683,15 @@ public class AppGUI extends Application
             this.Admin_DeleteSubject( stage );
         } );
         grid.add( deleteSubjectBtn, 1, 4 );
+        
+        
+        // User Management button
+        Button userManagementBtn = new Button( "User management" );
+        userManagementBtn.setMaxWidth( 250.0 );
+        userManagementBtn.setOnAction( e -> {
+            this.Admin_UserManager( stage );
+        } );
+        grid.add( userManagementBtn, 0, 5 );
     }
     
     private void Admin_AddRoom( Stage stage ) 
@@ -727,7 +735,6 @@ public class AppGUI extends Application
                     if ( util.ValidRoomName( room ) ) {
                         sql.AddRoom( room );
                         notify( "Room added.", false );
-                        //stage.close();
                         this.AdminTools( stage );
                     } else {
                         notify( "Room name exceeds 16 characters.", true );
@@ -912,6 +919,36 @@ public class AppGUI extends Application
         });
         
         grid.add( deleteBtn, 1, 3 );
+    }
+    
+    private void Admin_UserManager( Stage stage )
+    {
+        double width, height; 
+
+        width = 900;
+        height = 625;
+        
+        // Set the title of the window including the users name based on the user ID
+        stage.setTitle( "User Management" );
+        
+        // Set up the grid pane
+        GridPane grid = new GridPane();
+        grid.setAlignment( Pos.CENTER );
+        grid.setGridLinesVisible( false );
+        grid.setHgap( 10 );
+        grid.setVgap( 10 );
+        
+        // Create the main scene for the window
+        Scene scene = new Scene( grid, width, height );
+        stage.setScene( scene );
+        stage.setResizable( false );
+        stage.centerOnScreen();
+        stage.show();
+        stage.toFront();
+        
+        Text scenetitle = new Text( "User Management" );
+        scenetitle.setFont( Font.font( "Tahoma", FontWeight.NORMAL, 20 ) );
+        grid.add( scenetitle, 0, 0, 4, 1 );
     }
 
     private Button Admin_DeleteBooking( byte slot, LocalDate date, String room, Stage timeTableStage )
