@@ -1,17 +1,6 @@
 // set up the application package 
 package roombookingsystem;
 
-/*
-    TODO
-      - Write individual functions for verifying usernames, passwords etc..
-      - Create account should actually create an account request in a seperate DB table
-      - Add in an a way for admins to reset someone's password, this user should then be 
-        prompted the next time they try to log in to reset their password.
-      - Date picker to jump to a specific week/date
-      - Display times on the left hand side, take into account PSE days 
-      - Add in checks for no rooms in DB and put in sufficient handling of potential errors. 
-*/
-
 // Import all needed libraries 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
