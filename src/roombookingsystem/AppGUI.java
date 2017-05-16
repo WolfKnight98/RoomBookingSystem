@@ -22,6 +22,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -961,6 +962,22 @@ public class AppGUI extends Application
         TableColumn adminCol = new TableColumn( "Administrator" );
         TableColumn authCol = new TableColumn( "Authorised" );
         
+        idCol.setCellValueFactory( new PropertyValueFactory<>( "userID" ) );
+        firstNameCol.setCellValueFactory( new PropertyValueFactory<>( "firstName" ) );
+        lastNameCol.setCellValueFactory( new PropertyValueFactory<>( "lastName" ) );
+        userNameCol.setCellValueFactory( new PropertyValueFactory<>( "userName" ) );
+        titleCol.setCellValueFactory( new PropertyValueFactory<>( "title" ) );
+        adminCol.setCellValueFactory( new PropertyValueFactory<>( "admin" ) );
+        authCol.setCellValueFactory( new PropertyValueFactory<>( "authorised" ) );
+        
+        ObservableList<UserRow> tableData = FXCollections.observableArrayList();
+        
+        String[][] users = sql.GetAllUsers(); 
+        for ( String[] user : users ) {
+            tableData.add( new UserRow( Integer.parseInt( user[0] ), user[1], user[2], user[3], user[4], user[5], user[6] ) );
+        }
+        
+        table.setItems( tableData );
         table.getColumns().addAll( idCol, firstNameCol, lastNameCol, userNameCol, titleCol, adminCol, authCol );
         
         grid.add( table, 0, 2 );

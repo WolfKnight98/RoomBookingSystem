@@ -35,7 +35,7 @@ public class MySQL_Handler
 {
     // Use XAMPP (latest version) if the droplets become out of date 
     // or I run out of credit. 
-    private final boolean DEBUG = false; 
+    private final boolean DEBUG = true; 
     
     private static final String HOST = "localhost";
     private static final int PORT = 3306;
