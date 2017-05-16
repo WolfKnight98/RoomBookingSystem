@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -16,10 +17,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -32,6 +36,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 /**
  * AppGUI is the main class in the Time Table application. 
@@ -46,7 +51,7 @@ public class AppGUI extends Application
      */
     public static MySQL_Handler sql = new MySQL_Handler();
     private static HelperUtils util = new HelperUtils(); 
-    private static int CURRENT_USER_ID; 
+    private  int CURRENT_USER_ID; 
     private boolean BOOK_WINDOW_OPEN = false; 
     private boolean ADMIN_TOOLS_WINDOW_OPEN = false;
     private String CURRENT_ROOM = "";
@@ -979,6 +984,29 @@ public class AppGUI extends Application
         
         table.setItems( tableData );
         table.getColumns().addAll( idCol, firstNameCol, lastNameCol, userNameCol, titleCol, adminCol, authCol );
+        
+        table.setRowFactory( tr -> {
+            final TableRow<UserRow> row = new TableRow<>();
+            final ContextMenu contextMenu = new ContextMenu();
+            final MenuItem removeMenuItem = new MenuItem( "Delete user" );
+            removeMenuItem.setOnAction( e -> { 
+                int userid = row.getItem().GetUserID();
+                
+                if ( sql.IsAdmin( this.CURRENT_USER_ID ) ) 
+                {
+                    if ( this.CURRENT_USER_ID != userid ) {
+                        sql.DeleteUserAccount( userid );
+                        table.getItems().remove( row.getItem() ); 
+                    } else {
+                        notify( "You cannot delete your own account.", true );
+                    }
+                }
+            } );
+            
+            contextMenu.getItems().add( removeMenuItem );
+            row.contextMenuProperty().bind( Bindings.when( row.emptyProperty() ).then( (ContextMenu) null ).otherwise( contextMenu ) );
+            return row;
+        });
         
         grid.add( table, 0, 2 );
     }
