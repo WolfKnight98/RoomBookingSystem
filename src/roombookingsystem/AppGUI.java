@@ -5,6 +5,7 @@ package roombookingsystem;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Optional;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -16,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Hyperlink;
@@ -599,6 +601,7 @@ public class AppGUI extends Application
                             } else {
                                 sql.CreateUserAccount( userData[2], userData[3], title, userData[0], userData[1], false );
                                 notify( "Your account has been registered, an administrator will view your request and will either accept or deny it soon..", false );
+                                stage.close();
                             }
                         } else if ( userData[3].isEmpty() || userData[4].isEmpty() ) {
                             notify( "Password/confirm password box is empty.", true );
@@ -956,7 +959,7 @@ public class AppGUI extends Application
         
         Text scenetitle = new Text( "User Management" );
         scenetitle.setFont( Font.font( "Tahoma", FontWeight.NORMAL, 20 ) );
-        grid.add( scenetitle, 0, 0, 4, 1 );
+        grid.add( scenetitle, 0, 0 );
         
         TableView table = new TableView();
         TableColumn idCol = new TableColumn( "ID" );
@@ -964,8 +967,8 @@ public class AppGUI extends Application
         TableColumn lastNameCol = new TableColumn( "Last Name" );
         TableColumn userNameCol = new TableColumn( "Username" );
         TableColumn titleCol = new TableColumn( "Title" );
-        TableColumn adminCol = new TableColumn( "Administrator" );
-        TableColumn authCol = new TableColumn( "Authorised" );
+        TableColumn adminCol = new TableColumn( "Administrator?" );
+        TableColumn authCol = new TableColumn( "Account Authorised?" );
         
         idCol.setCellValueFactory( new PropertyValueFactory<>( "userID" ) );
         firstNameCol.setCellValueFactory( new PropertyValueFactory<>( "firstName" ) );
@@ -984,12 +987,13 @@ public class AppGUI extends Application
         
         table.setItems( tableData );
         table.getColumns().addAll( idCol, firstNameCol, lastNameCol, userNameCol, titleCol, adminCol, authCol );
+        table.setMinWidth( 750.0 );
         
         table.setRowFactory( tr -> {
-            final TableRow<UserRow> row = new TableRow<>();
-            final ContextMenu contextMenu = new ContextMenu();
-            final MenuItem removeMenuItem = new MenuItem( "Delete user" );
-            removeMenuItem.setOnAction( e -> { 
+            TableRow<UserRow> row = new TableRow<>();
+            ContextMenu contextMenu = new ContextMenu();
+            MenuItem deleteUserMenuItem = new MenuItem( "Delete user" );
+            deleteUserMenuItem.setOnAction( e -> { 
                 int userid = row.getItem().GetUserID();
                 
                 if ( sql.IsAdmin( this.CURRENT_USER_ID ) ) 
@@ -1003,12 +1007,38 @@ public class AppGUI extends Application
                 }
             } );
             
-            contextMenu.getItems().add( removeMenuItem );
+            MenuItem resetPasswordMenuItem = new MenuItem( "Reset password" );
+            resetPasswordMenuItem.setOnAction( e -> {
+                int userid = row.getItem().GetUserID();
+                
+                if ( sql.IsAdmin( this.CURRENT_USER_ID ) ) 
+                {
+                    if ( this.CURRENT_USER_ID == userid ) {
+                        Alert alert = new Alert( AlertType.CONFIRMATION );
+                        alert.setTitle( "Room Booking System" );
+                        alert.setContentText( "Are you sure you want to reset your own password?" );
+                        
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if ( result.get() == ButtonType.OK ) {
+                            notify( "Password reset to 1234.", false );
+                            // sql password reset method 
+                        }
+                    } else {
+                        notify( "Password reset to 1234.", false );
+                        // sql password reset method 
+                    }
+                }
+            } );
+            
+            contextMenu.getItems().addAll( deleteUserMenuItem, resetPasswordMenuItem );
             row.contextMenuProperty().bind( Bindings.when( row.emptyProperty() ).then( (ContextMenu) null ).otherwise( contextMenu ) );
             return row;
         });
         
-        grid.add( table, 0, 2 );
+        HBox tableContainer = new HBox( 10 );
+        tableContainer.setAlignment( Pos.CENTER );
+        tableContainer.getChildren().add( table );
+        grid.add( tableContainer, 0, 2 );
     }
 
     private Button Admin_DeleteBooking( byte slot, LocalDate date, String room, Stage timeTableStage )
