@@ -19,6 +19,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -144,7 +146,7 @@ public class AppGUI extends Application
                     if ( authorised ) {
                         this.TimeTable( stage );
                     } else {
-                        notify( "Your account has not been authorised yet.", false );
+                        notify( "Your account has not been activated yet.", false );
                     }
                 } else {
                     actiontarget.setText( "User details invalid." );
@@ -949,6 +951,19 @@ public class AppGUI extends Application
         Text scenetitle = new Text( "User Management" );
         scenetitle.setFont( Font.font( "Tahoma", FontWeight.NORMAL, 20 ) );
         grid.add( scenetitle, 0, 0, 4, 1 );
+        
+        TableView table = new TableView();
+        TableColumn idCol = new TableColumn( "ID" );
+        TableColumn firstNameCol = new TableColumn( "First Name" );
+        TableColumn lastNameCol = new TableColumn( "Last Name" );
+        TableColumn userNameCol = new TableColumn( "Username" );
+        TableColumn titleCol = new TableColumn( "Title" );
+        TableColumn adminCol = new TableColumn( "Administrator" );
+        TableColumn authCol = new TableColumn( "Authorised" );
+        
+        table.getColumns().addAll( idCol, firstNameCol, lastNameCol, userNameCol, titleCol, adminCol, authCol );
+        
+        grid.add( table, 0, 2 );
     }
 
     private Button Admin_DeleteBooking( byte slot, LocalDate date, String room, Stage timeTableStage )
