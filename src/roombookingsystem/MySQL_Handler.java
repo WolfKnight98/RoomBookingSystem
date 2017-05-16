@@ -176,6 +176,19 @@ public class MySQL_Handler
         return false;
     }
     
+    public boolean CheckAccountExists( int userid ) 
+    {
+        try {
+            ResultSet rs = this.query( "SELECT UserID FROM users" );
+
+            while ( rs.next() ) { if ( rs.getInt( "UserID" ) == userid ) { return true; } }
+        } catch ( SQLException err ) {
+            System.out.println( err.getMessage() );
+        }
+        
+        return false;
+    }
+    
     /**
      * Creates a user account in the database. 
      * @param username Username that the user uses to login with. 
@@ -197,6 +210,15 @@ public class MySQL_Handler
             this.executeUpdate( act ); 
             
             DebugPrint( "Account created!" );
+        }
+    }
+    
+    public void DeleteUserAccount( int userid )
+    {
+        if ( this.CheckAccountExists( userid ) == true )
+        {
+            String q = String.format( "DELETE FROM users WHERE UserID = '%d';", userid );
+            this.executeUpdate( q );
         }
     }
     
