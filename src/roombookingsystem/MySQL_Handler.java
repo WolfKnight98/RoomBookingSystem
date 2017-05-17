@@ -657,7 +657,7 @@ public class MySQL_Handler
     {
         if ( this.CheckAccountExists( userid ) )
         {
-            String q = String.format( "UPDATE users SET UserPassword = '1234' WHERE UserID = '%d';", userid );
+            String q = String.format( "UPDATE users SET UserPassword = MD5('1234') WHERE UserID = '%d';", userid );
             this.executeUpdate( q );
         }
     }
