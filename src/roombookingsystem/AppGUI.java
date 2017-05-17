@@ -1021,11 +1021,11 @@ public class AppGUI extends Application
                         Optional<ButtonType> result = alert.showAndWait();
                         if ( result.get() == ButtonType.OK ) {
                             notify( "Password reset to 1234.", false );
-                            // sql password reset method 
+                            sql.ResetUserPassword( userid );
                         }
                     } else {
                         notify( "Password reset to 1234.", false );
-                        // sql password reset method 
+                        sql.ResetUserPassword( userid );
                     }
                 }
             } );

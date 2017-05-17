@@ -653,6 +653,15 @@ public class MySQL_Handler
         return null;
     }
     
+    public void ResetUserPassword( int userid )
+    {
+        if ( this.CheckAccountExists( userid ) )
+        {
+            String q = String.format( "UPDATE users SET UserPassword = '1234' WHERE UserID = '%d';", userid );
+            this.executeUpdate( q );
+        }
+    }
+    
     /**
      * Checks if the specified room exists.
      * @param room Room to check for. 
