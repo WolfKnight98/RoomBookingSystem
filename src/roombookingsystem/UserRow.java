@@ -27,6 +27,8 @@ public class UserRow
     public String getAdmin() { return admin.get(); }
     public String getAuthorised() { return authorised.get(); }
     
+    public void setAdmin( String admin ) { this.admin.set( admin ); }
+    public void setAuthorised( String authorised ) { this.authorised.set( authorised ); }
     
     public int GetUserID()
     {

@@ -968,7 +968,7 @@ public class AppGUI extends Application
         TableColumn userNameCol = new TableColumn( "Username" );
         TableColumn titleCol = new TableColumn( "Title" );
         TableColumn adminCol = new TableColumn( "Administrator?" );
-        TableColumn authCol = new TableColumn( "Account Authorised?" );
+        TableColumn authCol = new TableColumn( "Account Activated?" );
         
         idCol.setCellValueFactory( new PropertyValueFactory<>( "userID" ) );
         firstNameCol.setCellValueFactory( new PropertyValueFactory<>( "firstName" ) );
@@ -1001,6 +1001,7 @@ public class AppGUI extends Application
                     if ( this.CURRENT_USER_ID != userid ) {
                         sql.DeleteUserAccount( userid );
                         table.getItems().remove( row.getItem() ); 
+                        table.refresh();
                     } else {
                         notify( "You cannot delete your own account.", true );
                     }
@@ -1027,10 +1028,33 @@ public class AppGUI extends Application
                         notify( "Password reset to 1234.", false );
                         sql.ResetUserPassword( userid );
                     }
+                    
+                    table.refresh();
                 }
             } );
             
-            contextMenu.getItems().addAll( deleteUserMenuItem, resetPasswordMenuItem );
+            MenuItem authoriseMenuItem = new MenuItem( "Activate account" );
+            authoriseMenuItem.setOnAction( e -> {
+                int userid = row.getItem().GetUserID();
+                
+                if ( sql.IsAdmin( this.CURRENT_USER_ID ) )
+                {
+                    if ( this.CURRENT_USER_ID == userid ) {
+                        notify( "Your account is already activated.", true );
+                    } else {
+                        String activated = row.getItem().getAuthorised();
+                        
+                        if ( activated.equals( "No" ) ) {
+                            notify( "Account activated.", false );
+                            sql.ActivateAccount( userid );
+                            row.getItem().setAuthorised( "Yes" );
+                            table.refresh();
+                        }
+                    }
+                }
+            } );
+            
+            contextMenu.getItems().addAll( deleteUserMenuItem, resetPasswordMenuItem, authoriseMenuItem );
             row.contextMenuProperty().bind( Bindings.when( row.emptyProperty() ).then( (ContextMenu) null ).otherwise( contextMenu ) );
             return row;
         });

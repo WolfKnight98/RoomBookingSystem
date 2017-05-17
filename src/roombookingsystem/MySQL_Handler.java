@@ -662,6 +662,15 @@ public class MySQL_Handler
         }
     }
     
+    public void ActivateAccount( int userid )
+    {
+        if ( this.CheckAccountExists( userid ) )
+        {
+            String q = String.format( "UPDATE users SET UserAuthorised = '1' WHERE UserID = '%d';", userid );
+            this.executeUpdate( q );
+        }
+    }
+    
     /**
      * Checks if the specified room exists.
      * @param room Room to check for. 
