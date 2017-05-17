@@ -38,7 +38,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 /**
  * AppGUI is the main class in the Time Table application. 
@@ -1049,12 +1048,37 @@ public class AppGUI extends Application
                             sql.ActivateAccount( userid );
                             row.getItem().setAuthorised( "Yes" );
                             table.refresh();
+                        } else {
+                            notify( "Account already activated.", true );
                         }
                     }
                 }
             } );
             
-            contextMenu.getItems().addAll( deleteUserMenuItem, resetPasswordMenuItem, authoriseMenuItem );
+            MenuItem deauthoriseMenuItem = new MenuItem( "Deactivate account" );
+            deauthoriseMenuItem.setOnAction( e -> {
+                int userid = row.getItem().GetUserID();
+                
+                if ( sql.IsAdmin( this.CURRENT_USER_ID ) )
+                {
+                    if ( this.CURRENT_USER_ID == userid ) {
+                        notify( "You cannot deactivate your own account.", true );
+                    } else {
+                        String activated = row.getItem().getAuthorised();
+                        
+                        if ( activated.equals( "Yes" ) ) {
+                            notify( "Account deactivated.", false );
+                            sql.DeactivateAccount( userid );
+                            row.getItem().setAuthorised( "No" );
+                            table.refresh();
+                        } else {
+                            notify( "Account already deactivated.", true );
+                        }
+                    }
+                }
+            } );
+            
+            contextMenu.getItems().addAll( deleteUserMenuItem, resetPasswordMenuItem, authoriseMenuItem, deauthoriseMenuItem );
             row.contextMenuProperty().bind( Bindings.when( row.emptyProperty() ).then( (ContextMenu) null ).otherwise( contextMenu ) );
             return row;
         });
