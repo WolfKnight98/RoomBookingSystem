@@ -960,6 +960,9 @@ public class AppGUI extends Application
         scenetitle.setFont( Font.font( "Tahoma", FontWeight.NORMAL, 20 ) );
         grid.add( scenetitle, 0, 0 );
         
+        Label helpLabel = new Label( "Right-click on any row to view a list of options for that specific user." );
+        grid.add( helpLabel, 0, 1 );
+        
         TableView table = new TableView();
         TableColumn idCol = new TableColumn( "ID" );
         TableColumn firstNameCol = new TableColumn( "First Name" );
@@ -1007,7 +1010,7 @@ public class AppGUI extends Application
                 }
             } );
             
-            MenuItem resetPasswordMenuItem = new MenuItem( "Reset password" );
+            MenuItem resetPasswordMenuItem = new MenuItem( "Reset password to 1234" );
             resetPasswordMenuItem.setOnAction( e -> {
                 int userid = row.getItem().GetUserID();
                 
