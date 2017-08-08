@@ -36,6 +36,30 @@ public class HelperUtils
         return true; 
     }
     
+    public boolean ValidStrings( String text )
+    {
+        boolean valid = false; 
+        
+        if ( text.isEmpty() || this.IsJustWhitespace( text ) ) { return false; }
+        
+        char[] chars = text.toCharArray();
+        
+        if ( Character.isLetter( chars[0] ) ) { valid = true; } 
+        
+        if ( valid ) {
+            for ( char c : chars )
+            {
+                if( !Character.isLetterOrDigit( c ) || Character.isWhitespace( c ) ) {
+                    return false;
+                }
+            }
+            
+            return true; 
+        }
+        
+        return false; 
+    }
+    
     /**
      * Checks if a room name is valid and does not contain more than 16 characters. 
      * @param name String name to check.

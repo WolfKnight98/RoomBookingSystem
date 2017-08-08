@@ -20,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -268,9 +269,18 @@ public class AppGUI extends Application
         }
         if ( this.DATE_OF_OPEN == null ) { this.DATE_OF_OPEN = monday; }
         
+        DatePicker dateChooser = new DatePicker();
+        dateChooser.setShowWeekNumbers( false );
+        dateChooser.setValue( this.CURRENT_WEEK_DATE );
+        dateChooser.setOnAction( e -> {
+            this.CURRENT_WEEK_DATE = dateChooser.getValue();
+            this.TimeTable( stage );
+        } );
+        grid.add( dateChooser, 3, 1 );
+        
         // Display the current week date at the top center of the program 
-        Label currentWeekDate = new Label( String.format( "Week of the %s.", this.CURRENT_WEEK_DATE ) );
-        grid.add( currentWeekDate, 3, 1, 4, 1 );
+        //Label currentWeekDate = new Label( String.format( "Week of the %s.", this.CURRENT_WEEK_DATE ) );
+        //grid.add( currentWeekDate, 3, 1, 4, 1 );
         
         // Set up the data and button variables for the time table 
         ArrayList[][] bookingData = new ArrayList[ 5 ][ 3 ];
@@ -851,14 +861,14 @@ public class AppGUI extends Application
         Button addBtn = new Button( "Add" );
         
         addBtn.setOnAction( e -> {
-            String subject = util.CapitaliseWords( subjectName.getText() );
+            String subject = util.Capitalise( subjectName.getText() );
+            System.out.println( "Subject: " + subject );
             
             if ( ( !subject.isEmpty() ) && ( sql.CheckSubjectExists( subject ) == false ) ) {
-                if ( util.ValidString( subject ) == true ) {
+                if ( util.ValidString( subject ) ) {
                     if ( util.ValidSubjectName( subject ) ) {
                         sql.AddSubject( subject );
                         notify( "Subject added.", false );
-                        //stage.close();
                         this.AdminTools( stage );
                     } else {
                         notify( "Subject name exceeds 32 characters.", true );
