@@ -1010,10 +1010,18 @@ public class AppGUI extends Application
                 
                 if ( sql.IsAdmin( this.CURRENT_USER_ID ) ) 
                 {
-                    if ( this.CURRENT_USER_ID != userid ) {
-                        sql.DeleteUserAccount( userid );
-                        table.getItems().remove( row.getItem() ); 
-                        table.refresh();
+                    if ( this.CURRENT_USER_ID != userid ) {                        
+                        Alert alert = new Alert( AlertType.CONFIRMATION );
+                        alert.setTitle( "Room Booking System" );
+                        alert.setContentText( "Are you sure you want to delete the account?" );
+                        
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if ( result.get() == ButtonType.OK ) {
+                            notify( "Account deleted.", false );
+                            sql.DeleteUserAccount( userid );
+                            table.getItems().remove( row.getItem() ); 
+                            table.refresh();
+                        }
                     } else {
                         notify( "You cannot delete your own account.", true );
                     }
