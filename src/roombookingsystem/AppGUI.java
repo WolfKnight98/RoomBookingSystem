@@ -30,6 +30,7 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -93,6 +94,9 @@ public class AppGUI extends Application
         Text scenetitle = new Text( "Welcome" );
         scenetitle.setFont( Font.font( "Tahoma", FontWeight.NORMAL, 20 ) );
         grid.add( scenetitle, 0, 0, 2, 1 );
+        
+        final Text actiontarget = new Text();
+        grid.add( actiontarget, 0, 6, 2, 1 );
 
         Label userName = new Label( "Username:" );
         grid.add( userName, 0, 1 );
@@ -104,6 +108,44 @@ public class AppGUI extends Application
         grid.add( pw, 0, 2 );
 
         PasswordField pwBox = new PasswordField();
+        pwBox.setOnKeyPressed( e -> {
+            if ( e.getCode() == KeyCode.ENTER ) {
+                // Get the username and password data from the textfields
+                String username, password; 
+                boolean valid, authorised;
+                username = userTextField.getText();
+                password = pwBox.getText();
+
+                // Set the fill colour of the warning text
+                actiontarget.setFill( Color.FIREBRICK );
+
+                // Username and password verification
+                if ( username.isEmpty() || password.isEmpty() ) {
+                    actiontarget.setText( "Username and password needed." );
+                } else {
+                    actiontarget.setText( "Logging in ..." );
+
+                    // Call an SQL utility function to authenticate the username and password entered
+                    valid = sql.AuthenticateUser( username, password );
+
+                    // If the username and password is valid, then set the current user ID and load the timetable
+                    if ( valid ) {
+                        CURRENT_USER_ID = sql.GetUserID( username );
+
+                        authorised = sql.IsAccountAuthorised( CURRENT_USER_ID );
+
+                        if ( authorised ) {
+                            this.TimeTable( stage );
+                        } else {
+                            notify( "Your account has not been activated yet.", false );
+                        }
+                    } else {
+                        actiontarget.setText( "User details invalid." );
+                    }
+                }
+            }
+        });
+       
         grid.add( pwBox, 1, 2 );
         
         // Here we create a hyper-link that opens the create account window 
@@ -121,9 +163,6 @@ public class AppGUI extends Application
         hbBtn.setAlignment( Pos.BOTTOM_RIGHT );
         hbBtn.getChildren().add( btn );
         grid.add( hbBtn, 1, 4 );
-        
-        final Text actiontarget = new Text();
-        grid.add( actiontarget, 0, 6, 2, 1 );
 
         // Create an event that is run when the user clicks the button 
         btn.setOnAction( e -> {
